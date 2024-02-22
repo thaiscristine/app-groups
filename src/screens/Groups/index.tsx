@@ -9,7 +9,7 @@ import { Button } from '@components/Button';
 
 export function Groups() {
 
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState(['aaa', 'bbb', 'ccc', 'ddd', 'eee', 'fff', 'ggg', 'hhh', 'iii']);
   return (
     <Container>
       <Header />
@@ -29,7 +29,6 @@ export function Groups() {
       />
       <Button
         title='Create Group'
-        colorType='SECUNDARY'
       ></Button>
     </Container>
   );
