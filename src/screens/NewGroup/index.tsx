@@ -12,7 +12,7 @@ export function NewGroup() {
       <Content>
         <Icon />
         <Highlight title="New group" subtitle='Add a group to add the participants'/>
-        <Input />
+        <Input placeholder="Group's name"/>
         <Button title="Create group" style={{ marginTop: 20 }} />
       </Content>
     </Container>
