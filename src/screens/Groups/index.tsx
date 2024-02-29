@@ -25,9 +25,11 @@ export function Groups() {
             <ListEmpty 
               message="Time to get a new group? Create one!" 
             />
-          )} 
+          )}
+          showsVerticalScrollIndicator={false} 
       />
       <Button
+        style={{marginTop: 14}}
         title='Create Group'
       ></Button>
     </Container>

@@ -1,7 +1,7 @@
 import { TouchableOpacity } from "react-native";
 import styled, { css } from "styled-components/native";
 
-export type ButtonColorProps = 'PRIMARY' | 'SECUNDARY';
+export type ButtonColorProps = 'PRIMARY' | 'SECONDARY';
 
 type ButtonComponentStyleProps = {
     colorType: ButtonColorProps;
