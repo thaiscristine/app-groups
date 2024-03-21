@@ -10,7 +10,7 @@ export function NewGroup() {
   const navigation = useNavigation();
 
   function handleNewGroup() {
-    navigation.navigate('players');
+    navigation.navigate('players', { group: 'finland' });
   }
 
   return (
