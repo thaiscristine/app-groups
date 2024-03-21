@@ -10,17 +10,22 @@ import { Filter } from '@components/Filter';
 import { PlayerCard } from '@components/PlayerCard';
 import { ListEmpty } from '@components/ListEmpty';
 import { Button } from '@components/Button';
+import { useRoute } from '@react-navigation/native';
 
+type PlayersRouteParams = {
+    group: string;
+}
 
 export function Players() {
-
+    const route = useRoute();
+    const { group } = route.params as PlayersRouteParams;
     const [team, setTeam] = useState('time a');
     const [players, setPlayers] = useState(['Thais', 'Jonna', 'Bruna', 'Nath']);
 
   return (
     <Container>
         <Header showBackButton />
-        <Highlight title='Jogadores' subtitle={'Adicione as pessoas do time'} />
+        <Highlight title={group} subtitle={'Adicione as pessoas do time'} />
         <Form>
             <Input placeholder='Nome' autoCorrect={false}/>
             <ButtonIcon iconName='add'></ButtonIcon>
