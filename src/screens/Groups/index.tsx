@@ -11,7 +11,7 @@ import { groupsGetAll } from '@storage/group/groupsGetAll';
 
 export function Groups() {
 
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState<string[]>([]);
 
   const navigation = useNavigation();
   function handleNewGroup() {
@@ -20,8 +20,8 @@ export function Groups() {
 
   async function fetchGroups(){
     try {
-      const response = await groupsGetAll();
-      setGroups(response);
+      const data = await groupsGetAll();
+      setGroups(data);
     } catch (error) {
       console.log(error);
     }

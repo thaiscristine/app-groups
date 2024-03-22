@@ -13,8 +13,14 @@ export function NewGroup() {
   const [group, setGroup] = useState('');
 
   async function handleNewGroup() {
-    await groupCreate(group);
-    navigation.navigate('players', { group });
+    try {
+      await groupCreate(group);
+      navigation.navigate('players', { group });
+    }
+    catch (error) {
+      console.log(error);
+    }
+    
   }
 
   return (
