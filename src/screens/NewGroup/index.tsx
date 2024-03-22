@@ -1,12 +1,15 @@
-import { Button } from '@components/Button';
+import { useState } from 'react';
+import { Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AppError } from '@utils/AppError';
+import { groupCreate } from '@storage/group/groupCreate';
+
 import { Container, Content, Icon } from './styles';
 
+import { Button } from '@components/Button';
 import { Header } from '@components/Header';
 import { Highlight } from '@components/Highlight';
 import { Input } from '@components/Input';
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { groupCreate } from '@storage/group/groupCreate';
 
 export function NewGroup() {
   const navigation = useNavigation();
@@ -14,11 +17,23 @@ export function NewGroup() {
 
   async function handleNewGroup() {
     try {
-      await groupCreate(group);
+
+      if(group.trim().length === 0){
+        return Alert.alert('New group', 'The group name is required')
+      } 
+
+      await groupCreate(group.trim());
       navigation.navigate('players', { group });
     }
     catch (error) {
-      console.log(error);
+
+      if(error instanceof AppError){
+        Alert.alert('New group', error.message)
+      } else {
+        Alert.alert('New group', 'It was not possible to create the group')
+        console.log(error)
+      }
+      
     }
     
   }
