@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FlatList } from 'react-native';
+import { Alert, FlatList } from 'react-native';
 
 import { Container, Form, HeaderList, NumberOfPlayers } from './styles';
 import { Header } from '@components/Header';
@@ -11,6 +11,9 @@ import { PlayerCard } from '@components/PlayerCard';
 import { ListEmpty } from '@components/ListEmpty';
 import { Button } from '@components/Button';
 import { useRoute } from '@react-navigation/native';
+import { AppError } from '@utils/AppError';
+import { playerAddByGroup } from '@storage/player/playerAddByGroup';
+import { playersGetByGroup } from '@storage/player/playersGetByGroup';
 
 type PlayersRouteParams = {
     group: string;
@@ -22,13 +25,38 @@ export function Players() {
     const [team, setTeam] = useState('time a');
     const [players, setPlayers] = useState(['Thais', 'Jonna', 'Bruna', 'Nath']);
 
+    const [newPlayerName, setNewplayerName] = useState('');
+
+    async function handleAddPlayer() {
+        if(newPlayerName.trim() === '') {
+            return Alert.alert('Type a name');
+        }
+
+        const newPlayer = {
+            name: newPlayerName,
+            team
+        }
+
+        try {
+            await playerAddByGroup(newPlayer, group);
+            const players =  await playersGetByGroup(group);
+            console.log(players)
+        } catch(error){
+            if (error instanceof AppError) {
+                return Alert.alert('New person', error.message);
+            } else {
+                Alert.alert('New person', 'An error occurred when adding a new person');
+            }
+        }
+    }       
+
   return (
     <Container>
         <Header showBackButton />
         <Highlight title={group} subtitle={'Adicione as pessoas do time'} />
         <Form>
-            <Input placeholder='Nome' autoCorrect={false}/>
-            <ButtonIcon iconName='add'></ButtonIcon>
+            <Input placeholder='Nome' autoCorrect={false} onChangeText={setNewplayerName} />
+            <ButtonIcon iconName='add' onPress={handleAddPlayer}></ButtonIcon>
         </Form>
 
         <HeaderList>
