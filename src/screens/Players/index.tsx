@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Alert, FlatList } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { Alert, FlatList, TextInput } from 'react-native';
 
 import { Container, Form, HeaderList, NumberOfPlayers } from './styles';
 import { Header } from '@components/Header';
@@ -24,10 +24,12 @@ type PlayersRouteParams = {
 export function Players() {
     const route = useRoute();
     const { group } = route.params as PlayersRouteParams;
-    const [team, setTeam] = useState('team a', 'team b');
+    const [team, setTeam] = useState('time a');
     const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
 
     const [newPlayerName, setNewplayerName] = useState('');
+
+    const newPlayerNameInputRef = useRef<TextInput>(null)
 
     async function handleAddPlayer() {
         if(newPlayerName.trim() === '') {
@@ -41,9 +43,12 @@ export function Players() {
 
         try {
             await playerAddByGroup(newPlayer, group);
-            fetchPlayersByTeam();
-            console.log(players)
 
+            newPlayerNameInputRef.current?.blur();
+
+            setNewplayerName('');
+            fetchPlayersByTeam();
+            
         } catch(error){
             if (error instanceof AppError) {
                 return Alert.alert('New person', error.message);
@@ -73,7 +78,15 @@ export function Players() {
         <Header showBackButton />
         <Highlight title={group} subtitle={'Adicione as pessoas do time'} />
         <Form>
-            <Input placeholder='Nome' autoCorrect={false} onChangeText={setNewplayerName} />
+            <Input
+                onChangeText={setNewplayerName}
+                value={newPlayerName}
+                placeholder='Nome'
+                autoCorrect={false}
+                    inputRef={newPlayerNameInputRef}
+                    onSubmitEditing={handleAddPlayer}
+                    returnKeyType='done'
+            />
             <ButtonIcon iconName='add' onPress={handleAddPlayer}></ButtonIcon>
         </Form>
 
