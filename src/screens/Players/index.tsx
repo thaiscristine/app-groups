@@ -10,13 +10,14 @@ import { Filter } from '@components/Filter';
 import { PlayerCard } from '@components/PlayerCard';
 import { ListEmpty } from '@components/ListEmpty';
 import { Button } from '@components/Button';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppError } from '@utils/AppError';
 import { playerAddByGroup } from '@storage/player/playerAddByGroup';
 import { playersGetByGroup } from '@storage/player/playersGetByGroup';
 import { playersGetBryGroupAndTeam } from '@storage/player/playersGetBryGroupAndTeam';
 import { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO';
 import { playerRemoveByGroup } from '@storage/player/playerRemoveByGroup';
+import { groupRemoveByName } from '@storage/group/groupRemoveByName';
 
 type PlayersRouteParams = {
     group: string;
@@ -28,6 +29,7 @@ export function Players() {
     const [team, setTeam] = useState('time a');
     const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
 
+    const navigation = useNavigation();
     const [newPlayerName, setNewplayerName] = useState('');
 
     const newPlayerNameInputRef = useRef<TextInput>(null)
@@ -78,6 +80,30 @@ export function Players() {
             console.log(error)
             Alert.alert('Remove player', 'An error occurred when removing player');
         }
+    }
+
+    async function groupRemove() { 
+        try {
+            await groupRemoveByName(group);
+            navigation.navigate('groups');
+        } catch(error) {
+            console.log(error)
+            Alert.alert('Remove group', 'An error occurred when removing group');
+        }
+    }
+    
+    async function handleGroupRemove() {
+        Alert.alert('Remove group', 'You are about to delete this group. Are you sure?', [
+            {
+                text: 'No',
+                style: 'cancel'
+            },
+            {
+                text: 'Yes',
+                style: 'destructive',
+                onPress: () => groupRemove()
+            }
+        ]);
     }
 
     useEffect(() => {
@@ -138,7 +164,7 @@ export function Players() {
                 players.length === 0 && { flex: 1 }
             ]}
         />
-        <Button title='Remove team' colorType='SECONDARY' />
+        <Button title='Remove team' colorType='SECONDARY' onPress={handleGroupRemove} />
     </Container>
   );
 }
