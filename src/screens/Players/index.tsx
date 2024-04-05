@@ -13,11 +13,11 @@ import { Button } from '@components/Button';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { AppError } from '@utils/AppError';
 import { playerAddByGroup } from '@storage/player/playerAddByGroup';
-import { playersGetByGroup } from '@storage/player/playersGetByGroup';
 import { playersGetBryGroupAndTeam } from '@storage/player/playersGetBryGroupAndTeam';
 import { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO';
 import { playerRemoveByGroup } from '@storage/player/playerRemoveByGroup';
 import { groupRemoveByName } from '@storage/group/groupRemoveByName';
+import { Loading } from '@components/Loading';
 
 type PlayersRouteParams = {
     group: string;
@@ -26,6 +26,8 @@ type PlayersRouteParams = {
 export function Players() {
     const route = useRoute();
     const { group } = route.params as PlayersRouteParams;
+    
+    const [isLoading, setIsLoading] = useState(true);
     const [team, setTeam] = useState('time a');
     const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
 
@@ -64,11 +66,14 @@ export function Players() {
 
     async function fetchPlayersByTeam(){
         try {
+            setIsLoading(true);
             const playersByTeam = await playersGetBryGroupAndTeam(group, team);
             setPlayers(playersByTeam);
         } catch(error){
             console.log(error)
             Alert.alert('Players', 'An error occurred when fetching players');
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -91,7 +96,7 @@ export function Players() {
             Alert.alert('Remove group', 'An error occurred when removing group');
         }
     }
-    
+
     async function handleGroupRemove() {
         Alert.alert('Remove group', 'You are about to delete this group. Are you sure?', [
             {
@@ -143,27 +148,29 @@ export function Players() {
             >
             </FlatList>
             <NumberOfPlayers>{players.length}</NumberOfPlayers>
-        </HeaderList>
-        <FlatList
-            data={players}
-            keyExtractor={item => item.name}
-            renderItem={({ item }) => (
-                <PlayerCard 
-                    name={item.name}
-                    onRemove={() => handleRemovePlayer(item.name)}
-                ></PlayerCard>
-            )}
-            ListEmptyComponent={() => (
-                <ListEmpty
-                    message='Nenhum jogador adicionado'>
-                </ListEmpty>
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={[
-                { paddingBottom: 100 },
-                players.length === 0 && { flex: 1 }
-            ]}
-        />
+            </HeaderList>
+            { isLoading ? <Loading /> :
+                <FlatList
+                    data={players}
+                    keyExtractor={item => item.name}
+                    renderItem={({ item }) => (
+                        <PlayerCard 
+                            name={item.name}
+                            onRemove={() => handleRemovePlayer(item.name)}
+                        ></PlayerCard>
+                    )}
+                    ListEmptyComponent={() => (
+                        <ListEmpty
+                            message='Nenhum jogador adicionado'>
+                        </ListEmpty>
+                    )}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={[
+                        { paddingBottom: 100 },
+                        players.length === 0 && { flex: 1 }
+                    ]}
+                />
+            }
         <Button title='Remove team' colorType='SECONDARY' onPress={handleGroupRemove} />
     </Container>
   );
